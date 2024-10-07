@@ -1,10 +1,78 @@
 import os
 import random
 
+forca = ['''
+  +---+
+  |   |
+  |   O
+  |  /|\  
+  |  / \ 
+  | 
+  +=========   
+  ''',
+  '''
+  +---+
+  |   |
+  |   O
+  |  /|\  
+  |  /  
+  | 
+  +=========   
+  ''',
+  '''
+  +---+
+  |   |
+  |   O
+  |  /|\  
+  |    
+  | 
+  +=========   
+  ''',
+  '''
+  +---+
+  |   |
+  |   O
+  |  /|  
+  |    
+  | 
+  +=========   
+  ''',
+  '''
+  +---+
+  |   |
+  |   O
+  |    
+  |    
+  | 
+  +=========   
+  ''',
+  '''
+  +---+
+  |   |
+  |   
+  |    
+  |    
+  | 
+  +=========   
+  ''',
+  '''
+  +---+
+  |   
+  |   
+  |    
+  |    
+  | 
+  +=========   
+  ''']
+
+def escolhe_palavra(tema:int):
+  temas = ['Animais', 'Comidas', 'Profissões']
+  with open('temas/{}.txt'.format(temas[tema - 1]), 'r') as arquivo:
+    return (random.choice(arquivo.readlines()).strip(), temas[tema - 1])
 
 def main():
   tema = ''
-  while(tema not in ['1','2','3']):
+  while tema not in ['1','2','3']:
     os.system('cls')
     print('-' * 30)
     print('  J O G O   D A   F O R C A')
@@ -17,35 +85,43 @@ def main():
 
     tema = input('Escolha um tema e digite o número correspondente: ')
 
-    if(tema == '0'):
+    if tema == '0':
       break
-    elif(tema == '1'):
+    else:
+      palavra, nome_arquivo = escolhe_palavra(int(tema))
       os.system('cls')
-      print("Tema escolhido: Animais")
-      animais =  open('temas/animais.txt', 'r')
-      palavra = random.choice(animais.readlines())
-      animais.close()
-      for letra in palavra:
-        if letra == ' ':
-          print(letra, end='')
-        else:
-         print('_ ', end='')
+      tentativas = 7
+      palpites = []
+      while tentativas:
+        os.system('cls')
+        print("Tema escolhido: {}.\n\n".format(nome_arquivo))
+        print(forca[tentativas - 1])
+        for letra in palavra:
+          if letra == ' ':
+            print('  ', end='')
+          elif letra in palavra and letra in palpites:
+            print(letra, end='')
+          else:
+            print(' _ ', end='')
+        print('\n\nVocê tem {} tentativas.\n\n'.format(tentativas))
+        print('Palpites: {}'.format(palpites))
+        # print(palavra)
+        palpite = input('Chute uma letra ou a palavra: ')
+        palpites.append(palpite.upper().strip())
 
-    elif(tema == '2'):
-      os.system('cls')
-      print("Tema escolhido: Comidas")
-      comidas =  open('temas/comidas.txt', 'r', encoding='utf-8')
-      palavra = random.choice(comidas.readlines())
-      comidas.close()
-      print('\n', palavra, sep='')
-
-    elif(tema == '3'):
-      os.system('cls')
-      print("Tema escolhido: Profissões")
-      profissoes =  open('temas/profissoes.txt', 'r', encoding='utf-8')
-      palavra = random.choice(profissoes.readlines())
-      profissoes.close()
-      print('\n', palavra, sep='')
+        if(palpite.upper().strip() not in palavra):
+          tentativas -= 1
+        
+        if palavra in palpites:
+          os.system('cls')
+          print('Parabéns! Você venceu!')
+          print('A palavra era {}.'.format(palavra))
+          break
+      
+      if tentativas == 0:
+        os.system('cls')
+        print('Que pena! Você foi enforcado!')
+        print('A palavra era {}.'.format(palavra))
 
 
 if __name__ == "__main__":
